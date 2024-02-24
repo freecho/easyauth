@@ -1,0 +1,27 @@
+server:
+  port: 5555
+
+
+# springdoc-openapi
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+      packages-to-scan: com.easyauth
+# knife4j?????
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+
+spring:
+  security:
+    user:
+      password: "123456"
+      name: "admin"
