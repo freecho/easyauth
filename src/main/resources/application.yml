@@ -1,8 +1,6 @@
 server:
   port: 5555
 
-
-# springdoc-openapi
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -14,7 +12,7 @@ springdoc:
     - group: 'default'
       paths-to-match: '/**'
       packages-to-scan: com.easyauth
-# knife4j?????
+
 knife4j:
   enable: true
   setting:
@@ -25,3 +23,12 @@ spring:
     user:
       password: "123456"
       name: "admin"
+  datasource:
+    url: jdbc:mysql://localhost:3306/easy_auth?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

@@ -2,8 +2,12 @@ package com.easyauth.common.result;
 
 import com.easyauth.common.constant.CodeConstant;
 import com.easyauth.common.constant.MessageConstant;
+import lombok.Data;
 
-public class Result<T> {
+import java.io.Serializable;
+
+@Data
+public class Result<T> implements Serializable {
     private long code;
     private String message;
     private T data;
