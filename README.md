@@ -9,8 +9,8 @@
 
 ### 相关表
 
-- 一般用户表 public_user
-- 系统用户表 system_user
+- 用户表 user
+- 员工表 employee
 - 角色表 role
 - 用户角色关联表 user_role
 - 资源表 resource

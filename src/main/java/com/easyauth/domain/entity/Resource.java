@@ -1,5 +1,6 @@
 package com.easyauth.domain.entity;
 
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -7,21 +8,16 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-/**
- * <p>
- * 用户实体类
- * </p>
- */
 @Data
-@TableName("user")
-public class User {
+@TableName("resource")
+public class Resource {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-    private String username;
-    private String password;
-    private String email;
-    private LocalDateTime lastLogin;
-    private LocalDateTime registerTime;
-    private Integer status;
+    private String name;
+    private String httpMethod;
+    private String path;
+    private String description;
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
 
 }

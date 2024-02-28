@@ -1,13 +1,12 @@
 package com.easyauth.controller.admin;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.easyauth.common.result.Result;
+import com.easyauth.domain.entity.Resource;
 import com.easyauth.domain.entity.User;
-import com.easyauth.mapper.UserMapper;
 import com.easyauth.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,11 +39,26 @@ public class UserController {
         return Result.success();
     }
 
+    /**
+     * 切换用户状态，用户拓展封禁，冻结等功能
+     *
+     * @param id
+     * @param status
+     * @return
+     */
     @Operation(summary = "切换用户状态")
     @PutMapping("/status/{status}")
     public Result<String> switchStatus(@RequestParam Long id, @PathVariable Integer status) {
         userService.switchStatus(id, status);
         return Result.success();
+    }
+
+    @Operation(summary = "用户列表")
+    @GetMapping("/list")
+    public Result<Page<User>> getList(int current, int size) {
+        Page<User> page = new Page<>(current, size);
+        Page<User> pageResult = userService.page(page);
+        return Result.success(pageResult);
     }
 
 }

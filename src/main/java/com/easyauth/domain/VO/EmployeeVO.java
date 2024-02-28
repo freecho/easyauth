@@ -1,23 +1,18 @@
-package com.easyauth.domain.entity;
+package com.easyauth.domain.VO;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * <p>
- * 员工实体类
- * </p>
- */
 @Data
-@TableName("employee")
-public class Employee {
-    @TableId(value = "id", type = IdType.AUTO)
+public class EmployeeVO {
+
     private Long id;
     private String username;
-    private String password;
     private String email;
     private LocalDateTime lastLogin;
     private LocalDateTime registerTime;
