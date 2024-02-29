@@ -16,8 +16,7 @@ public class EmployeeVO {
     private String email;
     private LocalDateTime lastLogin;
     private LocalDateTime registerTime;
-    private Integer status;
+    private Long status;
 
-    @TableField(exist = false)
-    private List<Integer> perms;
+    private List<Long> rolesId;
 }

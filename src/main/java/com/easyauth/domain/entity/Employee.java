@@ -24,5 +24,5 @@ public class Employee {
     private Long status;
 
     @TableField(exist = false)
-    private List<Integer> perms;
+    private List<Long> rolesId;
 }

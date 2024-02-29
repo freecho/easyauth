@@ -9,7 +9,7 @@ public class ResourcePageQueryDTO {
 
     Long current;
 
-    Long size;
+    Long size = 10L;
 
     String name;
 

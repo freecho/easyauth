@@ -39,7 +39,7 @@ public class ResourceController {
         return Result.success();
     }
 
-    @Operation(summary = "分页条件查询")
+    @Operation(summary = "分页条件查询",description = "current必须提供，size默认为10")
     @GetMapping("/conditionSearch")
     public Result<Page<Resource>> conditionSearch(ResourcePageQueryDTO dto) {
         return Result.success(resourceService.conditionSearch(dto));

@@ -2,12 +2,16 @@ package com.easyauth.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.easyauth.common.result.Result;
+import com.easyauth.common.utils.PageUtils;
 import com.easyauth.domain.DTO.EmployeeDTO;
+import com.easyauth.domain.DTO.EmployeePageQueryDTO;
+import com.easyauth.domain.VO.EmployeeVO;
 import com.easyauth.domain.entity.Employee;
 import com.easyauth.service.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,12 +42,15 @@ public class EmployeeController {
 
     @Operation(summary = "员工列表")
     @GetMapping("/list")
-    public Result<Page<Employee>> getList(int current, int size) {
-        Page<Employee> page = new Page<>(current, size);
-        Page<Employee> pageResult = employeeService.page(page);
-        return Result.success(pageResult);
+    public Result<Page<EmployeeVO>> getList(Long current, Long size) {
+        return Result.success(employeeService.getList(current, size));
     }
 
-    //TODO 员工条件查询
+    @Operation(summary = "员工分页条件查询", description = "current必须提供，size默认为10")
+    @GetMapping("/conditionSearch")
+    public Result<Page<EmployeeVO>> conditionSearch(EmployeePageQueryDTO dto) {
+        return Result.success(employeeService.conditionSearch(dto));
+    }
+
 
 }

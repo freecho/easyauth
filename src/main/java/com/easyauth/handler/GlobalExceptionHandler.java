@@ -1,6 +1,7 @@
 package com.easyauth.handler;
 
 import com.easyauth.common.exception.BaseException;
+import com.easyauth.common.exception.BeanConvertException;
 import com.easyauth.common.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,4 +25,5 @@ public class GlobalExceptionHandler {
         log.error("异常信息：{}", e.getMessage());
         return Result.failed(e.getMessage());
     }
+
 }

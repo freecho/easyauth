@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class UserVO {
@@ -13,5 +14,7 @@ public class UserVO {
     private String email;
     private LocalDateTime lastLogin;
     private LocalDateTime registerTime;
-    private Integer status;
+    private Long status;
+
+    private List<Long> rolesId;
 }

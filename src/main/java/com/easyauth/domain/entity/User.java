@@ -1,11 +1,13 @@
 package com.easyauth.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -24,4 +26,6 @@ public class User {
     private LocalDateTime registerTime;
     private Long status;
 
+    @TableField(exist = false)
+    private List<Long> rolesId;
 }

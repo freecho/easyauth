@@ -1,10 +1,14 @@
 package com.easyauth.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.easyauth.common.constant.MessageConstant;
 import com.easyauth.common.exception.InvalidDataException;
+import com.easyauth.common.utils.PageUtils;
 import com.easyauth.domain.DTO.EmployeeDTO;
+import com.easyauth.domain.DTO.EmployeePageQueryDTO;
+import com.easyauth.domain.VO.EmployeeVO;
 import com.easyauth.domain.entity.Employee;
 import com.easyauth.domain.entity.EmployeeRole;
 import com.easyauth.domain.entity.Role;
@@ -12,6 +16,7 @@ import com.easyauth.mapper.EmployeeMapper;
 import com.easyauth.service.EmployeeRoleService;
 import com.easyauth.service.EmployeeService;
 import com.easyauth.service.RoleService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -101,5 +106,60 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
             employeeRole.setRoleId(roleId);
             employeeRoleService.save(employeeRole);
         });
+    }
+
+    /**
+     * 员工动态条件查询
+     *
+     * @param dto
+     * @return
+     */
+    @Override
+    public Page<EmployeeVO> conditionSearch(EmployeePageQueryDTO dto) {
+        Page<Employee> page = new Page<>(dto.getCurrent(), dto.getSize());
+        LambdaQueryWrapper<Employee> wrapper = new LambdaQueryWrapper<>();
+
+        wrapper.like(dto.getUsername() != null, Employee::getUsername, dto.getUsername());
+        wrapper.like(dto.getEmail() != null, Employee::getEmail, dto.getEmail());
+
+        Page<Employee> pageResult = this.page(page, wrapper);
+
+        List<EmployeeRole> roleList = employeeRoleService.list();
+
+        pageResult.getRecords().forEach(employee -> {
+            List<Long> roles = new ArrayList<>();
+
+            roleList.forEach(role -> {
+                if (role.getEmployeeId().equals(employee.getId())) {
+                    roles.add(role.getRoleId());
+                }
+            });
+
+            employee.setRolesId(roles);
+        });
+
+        return PageUtils.convert(pageResult, EmployeeVO.class);
+    }
+
+    @Override
+    public Page<EmployeeVO> getList(Long current, Long size) {
+        Page<Employee> page = new Page<>(current, size);
+        Page<Employee> pageResult = this.page(page);
+
+        List<EmployeeRole> roleList = employeeRoleService.list();
+
+        pageResult.getRecords().forEach(employee -> {
+            List<Long> roles = new ArrayList<>();
+
+            roleList.forEach(role -> {
+                if (role.getEmployeeId().equals(employee.getId())) {
+                    roles.add(role.getRoleId());
+                }
+            });
+
+            employee.setRolesId(roles);
+        });
+
+        return PageUtils.convert(pageResult, EmployeeVO.class);
     }
 }
