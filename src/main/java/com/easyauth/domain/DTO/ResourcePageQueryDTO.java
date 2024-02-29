@@ -7,9 +7,9 @@ import java.time.LocalDateTime;
 @Data
 public class ResourcePageQueryDTO {
 
-    long current;
+    Long current;
 
-    long size;
+    Long size;
 
     String name;
 

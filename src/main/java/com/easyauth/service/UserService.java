@@ -6,5 +6,5 @@ import com.easyauth.domain.entity.User;
 public interface UserService extends IService<User> {
     public User getByUsername(String username);
 
-    void switchStatus(Long id, Integer status);
+    void switchStatus(Long id, Long status);
 }

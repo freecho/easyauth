@@ -16,7 +16,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public void switchStatus(Long id, Integer status) {
+    public void switchStatus(Long id, Long status) {
         User user = this.getById(id);
         user.setStatus(status);
         this.updateById(user);

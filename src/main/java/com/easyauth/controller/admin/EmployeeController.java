@@ -2,15 +2,16 @@ package com.easyauth.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.easyauth.common.result.Result;
+import com.easyauth.domain.DTO.EmployeeDTO;
 import com.easyauth.domain.entity.Employee;
 import com.easyauth.service.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin/employee")
@@ -21,7 +22,19 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-    //TODO 完善员工  注意权限相关的操作
+    @Operation(summary = "添加员工")
+    @PostMapping
+    public Result<String> add(@RequestBody EmployeeDTO employeeDTO) {
+        employeeService.add(employeeDTO);
+        return Result.success();
+    }
+
+    @Operation(summary = "编辑员工")
+    @PutMapping
+    public Result<String> edit(@RequestBody EmployeeDTO employeeDTO) {
+        employeeService.edit(employeeDTO);
+        return Result.success();
+    }
 
     @Operation(summary = "员工列表")
     @GetMapping("/list")
@@ -31,5 +44,6 @@ public class EmployeeController {
         return Result.success(pageResult);
     }
 
+    //TODO 员工条件查询
 
 }

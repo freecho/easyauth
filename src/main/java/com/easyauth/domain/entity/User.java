@@ -22,6 +22,6 @@ public class User {
     private String email;
     private LocalDateTime lastLogin;
     private LocalDateTime registerTime;
-    private Integer status;
+    private Long status;
 
 }

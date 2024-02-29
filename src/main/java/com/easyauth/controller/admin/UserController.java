@@ -19,11 +19,13 @@ public class UserController {
     private UserService userService;
 
     @Operation(summary = "根据用户名获取用户")
-    @GetMapping("/{username}")
-    public Result<User> getByUsername(@PathVariable String username) {
+    @GetMapping()
+    public Result<User> getByUsername(String username) {
         User user = userService.getByUsername(username);
         return Result.success(user);
     }
+
+    //TODO 完善用户  注意权限相关的操作 和事务支持 需要修改增改的方法关联到user_role表
 
     @Operation(summary = "添加用户")
     @PostMapping
@@ -47,15 +49,15 @@ public class UserController {
      * @return
      */
     @Operation(summary = "切换用户状态")
-    @PutMapping("/status/{status}")
-    public Result<String> switchStatus(@RequestParam Long id, @PathVariable Integer status) {
+    @PutMapping("/status")
+    public Result<String> switchStatus(Long id, Long status) {
         userService.switchStatus(id, status);
         return Result.success();
     }
 
     @Operation(summary = "用户列表")
     @GetMapping("/list")
-    public Result<Page<User>> getList(int current, int size) {
+    public Result<Page<User>> getList(Long current, Long size) {
         Page<User> page = new Page<>(current, size);
         Page<User> pageResult = userService.page(page);
         return Result.success(pageResult);
