@@ -7,6 +7,8 @@ public class MessageConstant {
     public static final String SUCCESS = "成功";
     public static final String FAILED = "失败";
     public static final String VALIDATE_FAILED = "参数不合法";
+
+    public static final String DARA_ERROR = "数据错误";
     public static final String UNAUTHORIZED = "暂未登录或token已经过期";
     public static final String FORBIDDEN = "没有相关权限";
     public static final String PASSWORD_ERROR = "密码错误";

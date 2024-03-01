@@ -26,4 +26,16 @@ public class GlobalExceptionHandler {
         return Result.failed(e.getMessage());
     }
 
+    /**
+     * BeanUtils 拷贝source为空
+     *
+     * @param e
+     * @return
+     */
+    @ExceptionHandler
+    public Result<String> exceptionHandler(IllegalArgumentException e) {
+        log.error("异常信息：{}", e.getMessage());
+        return Result.failed("参数错误");
+    }
+
 }

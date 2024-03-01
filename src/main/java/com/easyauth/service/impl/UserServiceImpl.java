@@ -1,21 +1,28 @@
 package com.easyauth.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.easyauth.common.constant.MessageConstant;
 import com.easyauth.common.exception.InvalidDataException;
+import com.easyauth.common.utils.PageUtils;
 import com.easyauth.domain.DTO.UserDTO;
-import com.easyauth.domain.entity.Role;
-import com.easyauth.domain.entity.User;
-import com.easyauth.domain.entity.UserRole;
+import com.easyauth.domain.DTO.UserPageQueryDTO;
+import com.easyauth.domain.VO.EmployeeVO;
+import com.easyauth.domain.VO.UserVO;
+import com.easyauth.domain.entity.*;
 import com.easyauth.mapper.UserMapper;
 import com.easyauth.service.RoleService;
 import com.easyauth.service.UserRoleService;
 import com.easyauth.service.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
@@ -29,12 +36,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     private UserRoleService userRoleService;
 
-
-    public User getByUsername(String username) {
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(User::getUsername, username);
-        return this.getOne(queryWrapper);
-    }
 
     @Override
     public void switchStatus(Long id, Long status) {
@@ -112,5 +113,54 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             userRole.setRoleId(roleId);
             userRoleService.save(userRole);
         });
+    }
+
+    @Override
+    public Page<UserVO> conditionSearch(UserPageQueryDTO dto) {
+        Page<User> page = new Page<>(dto.getCurrent(), dto.getSize());
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+
+        wrapper.like(dto.getUsername() != null, User::getUsername, dto.getUsername());
+        wrapper.like(dto.getEmail() != null, User::getEmail, dto.getEmail());
+
+        Page<User> pageResult = this.page(page, wrapper);
+
+        List<UserRole> roleList = userRoleService.list();
+
+        pageResult.getRecords().forEach(user -> {
+            List<Long> roles = new ArrayList<>();
+
+            roleList.forEach(userRole -> {
+                if (userRole.getUserId().equals(user.getId())) {
+                    roles.add(userRole.getRoleId());
+                }
+            });
+
+            user.setRolesId(roles);
+        });
+
+        return PageUtils.convert(pageResult, UserVO.class);
+    }
+
+    @Override
+    public Page<UserVO> getList(Long current, Long size) {
+        Page<User> page = new Page<>(current, size);
+        Page<User> pageResult = this.page(page);
+
+        List<UserRole> roleList = userRoleService.list();
+
+        pageResult.getRecords().forEach(user -> {
+            List<Long> roles = new ArrayList<>();
+
+            roleList.forEach(role -> {
+                if (role.getUserId().equals(user.getId())) {
+                    roles.add(role.getRoleId());
+                }
+            });
+
+            user.setRolesId(roles);
+        });
+
+        return PageUtils.convert(pageResult, UserVO.class);
     }
 }

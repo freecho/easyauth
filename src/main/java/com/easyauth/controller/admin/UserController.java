@@ -2,7 +2,10 @@ package com.easyauth.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.easyauth.common.result.Result;
+import com.easyauth.common.utils.PageUtils;
 import com.easyauth.domain.DTO.UserDTO;
+import com.easyauth.domain.DTO.UserPageQueryDTO;
+import com.easyauth.domain.VO.UserVO;
 import com.easyauth.domain.entity.Resource;
 import com.easyauth.domain.entity.User;
 import com.easyauth.service.UserService;
@@ -15,15 +18,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/user")
 @Tag(name = "用户管理")
 public class UserController {
-    //TODO 修改返回结果为 VO
+
     @Autowired
     private UserService userService;
 
-    @Operation(summary = "根据用户名获取用户")
-    @GetMapping()
-    public Result<User> getByUsername(String username) {
-        User user = userService.getByUsername(username);
-        return Result.success(user);
+    @Operation(summary = "条件查询用户")
+    @GetMapping("/conditionSearch")
+    public Result<Page<UserVO>> conditionSearch(UserPageQueryDTO dto) {
+        return Result.success(userService.conditionSearch(dto));
     }
 
     @Operation(summary = "添加用户")
@@ -56,10 +58,8 @@ public class UserController {
 
     @Operation(summary = "用户列表", description = "current必须提供，size默认为10")
     @GetMapping("/list")
-    public Result<Page<User>> getList(Long current, @RequestParam(required = false, defaultValue = "10") Long size) {
-        Page<User> page = new Page<>(current, size);
-        Page<User> pageResult = userService.page(page);
-        return Result.success(pageResult);
+    public Result<Page<UserVO>> getList(Long current, @RequestParam(required = false, defaultValue = "10") Long size) {
+        return Result.success(userService.getList(current, size));
     }
 
 }

@@ -26,6 +26,7 @@
 
 ### 模型图
 
+[//]: # (TODO 更新模型图)
 ![](./docs/img/RBAC_model.png)
 
 ### 认证
