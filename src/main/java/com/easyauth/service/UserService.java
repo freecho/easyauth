@@ -15,7 +15,9 @@ public interface UserService extends IService<User> {
 
     void edit(UserDTO userDTO);
 
-    Page<UserVO> conditionSearch(UserPageQueryDTO dto);
+    Page<UserVO> conditionSearchWithRoleId(UserPageQueryDTO dto);
+
+    Page<UserVO> conditionSearchWithOutRoleId(UserPageQueryDTO dto);
 
     Page<UserVO> getList(Long current, Long size);
 }

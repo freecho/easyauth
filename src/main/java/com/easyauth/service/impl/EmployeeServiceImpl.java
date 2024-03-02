@@ -152,7 +152,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
     }
 
     public Page<EmployeeVO> conditionSearchWithRoleId(EmployeePageQueryDTO queryDTO) {
-        List<Employee> employeeList = this.baseMapper.pageWithRolesId(queryDTO);
+        List<Employee> employeeList = employeeMapper.pageWithRolesId(queryDTO);
         int start = Math.min((int) ((queryDTO.getCurrent() - 1) * queryDTO.getSize()), employeeList.size());
         int end = Math.min((int) (start + queryDTO.getSize()), employeeList.size());
         employeeList.subList(start, end);

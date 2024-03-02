@@ -8,6 +8,7 @@ import com.easyauth.domain.DTO.UserPageQueryDTO;
 import com.easyauth.domain.VO.UserVO;
 import com.easyauth.domain.entity.Resource;
 import com.easyauth.domain.entity.User;
+import com.easyauth.mapper.UserMapper;
 import com.easyauth.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,15 +19,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/user")
 @Tag(name = "用户管理")
 public class UserController {
-
     @Autowired
     private UserService userService;
 
-    //TODO 增加角色条件
-    @Operation(summary = "条件查询用户")
+    @Operation(summary = "用户分页条件查询", description = "current必须提供，size默认为10")
     @GetMapping("/conditionSearch")
     public Result<Page<UserVO>> conditionSearch(UserPageQueryDTO dto) {
-        return Result.success(userService.conditionSearch(dto));
+        if (dto.getRoleIds() == null || dto.getRoleIds().isEmpty())
+            return Result.success(userService.conditionSearchWithOutRoleId(dto));
+        return Result.success(userService.conditionSearchWithRoleId(dto));
     }
 
     @Operation(summary = "添加用户")

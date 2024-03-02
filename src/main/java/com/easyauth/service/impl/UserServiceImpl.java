@@ -36,6 +36,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     private UserRoleService userRoleService;
 
+    @Autowired
+    private UserMapper userMapper;
+
 
     @Override
     public void switchStatus(Long id, Long status) {
@@ -116,7 +119,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public Page<UserVO> conditionSearch(UserPageQueryDTO dto) {
+    public Page<UserVO> conditionSearchWithOutRoleId(UserPageQueryDTO dto) {
         Page<User> page = new Page<>(dto.getCurrent(), dto.getSize());
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
 
@@ -140,6 +143,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         });
 
         return PageUtils.convert(pageResult, UserVO.class);
+    }
+
+    public Page<UserVO> conditionSearchWithRoleId(UserPageQueryDTO dto) {
+        List<User> userList = userMapper.pageWithRolesId(dto);
+        int start = Math.min((int) ((dto.getCurrent() - 1) * dto.getSize()), userList.size());
+        int end = Math.min((int) (start + dto.getSize()), userList.size());
+        userList.subList(start, end);
+
+        Page<User> page = new Page<>(dto.getCurrent(), dto.getSize());
+        page.setRecords(userList);
+        page.setTotal(userList.size());
+
+        return PageUtils.convert(page, UserVO.class);
     }
 
     @Override

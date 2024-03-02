@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easyauth.mapper.UserMapper">
+
+    <resultMap id="UserWithRolesMap" type="com.easyauth.domain.entity.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="email" property="email"/>
+        <result column="last_login" property="lastLogin"/>
+        <result column="register_time" property="registerTime"/>
+        <result column="status" property="status"/>
+        <collection property="rolesId" ofType="java.lang.Long" column="id" select="selectRolesByUserId"/>
+    </resultMap>
+
+    <select id="selectRolesByUserId" resultType="java.lang.Long">
+        SELECT role_id
+        FROM user_role
+        WHERE user_id = #{id}
+    </select>
+
+    <select id="pageWithRolesId" resultMap="UserWithRolesMap"
+            parameterType="com.easyauth.domain.DTO.UserPageQueryDTO">
+        <bind name="size" value="dto.getRoleIds().size()"/>
+        SELECT DISTINCT u.*
+        FROM user u
+        LEFT JOIN user_role ur ON u.id = ur.user_id
+        <where>
+            <if test="dto.username != null and dto.username != ''">
+                AND u.username LIKE CONCAT('%', #{dto.username}, '%')
+            </if>
+            <if test="dto.email != null and dto.email != ''">
+                AND u.email LIKE CONCAT('%', #{dto.email}, '%')
+            </if>
+            <!-- RolesId一定不为空，查找包含dto中角色集合的用户 -->
+            <if test="dto.roleIds != null">
+                AND ur.role_id IN
+                <foreach collection="dto.roleIds" item="roleId" open="(" separator="," close=")">
+                    #{roleId}
+                </foreach>
+                GROUP BY u.id
+                HAVING COUNT(DISTINCT ur.role_id) &gt;= #{size}
+            </if>
+        </where>
+    </select>
+</mapper>
