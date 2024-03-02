@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 /**
  * Mybatis-Plus 分页对象工具类
  */
-public class PageUtils {
+public class PageUtil {
 
     /**
      * 泛型版本的 Page 对象转换工具方法，使用 BeanUtils 复制属性。

@@ -1,5 +1,7 @@
 package com.easyauth.security.config;
 
+import com.easyauth.security.filter.JwtFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -10,11 +12,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
+    @Autowired
+    private JwtFilter jwtFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // 关闭csrf
@@ -26,17 +32,14 @@ public class SecurityConfig {
         // 关闭session
         http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        //TODO 实现自定义filter
+        //添加自定义的过滤器
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
 
         // 配置放行规则
-//        http.authorizeHttpRequests(authorizeRequests ->
-//                authorizeRequests
-//                        .requestMatchers("/public/**").permitAll()
-//                        .requestMatchers("/hello/**").permitAll()
-//                        .requestMatchers("/auth/**").permitAll()
-//                        .anyRequest().authenticated()
-//        );
-        http.authorizeHttpRequests(requests -> requests.anyRequest().permitAll());
+        http.authorizeHttpRequests(requests -> requests.requestMatchers("/hello/**").authenticated()
+                .anyRequest().permitAll());
+        
         // 配置跨域,默认开启所有跨域请求
         http.cors(Customizer.withDefaults());
 

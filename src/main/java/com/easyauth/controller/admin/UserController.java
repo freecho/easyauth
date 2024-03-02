@@ -2,13 +2,9 @@ package com.easyauth.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.easyauth.common.result.Result;
-import com.easyauth.common.utils.PageUtils;
 import com.easyauth.domain.DTO.UserDTO;
 import com.easyauth.domain.DTO.UserPageQueryDTO;
 import com.easyauth.domain.VO.UserVO;
-import com.easyauth.domain.entity.Resource;
-import com.easyauth.domain.entity.User;
-import com.easyauth.mapper.UserMapper;
 import com.easyauth.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

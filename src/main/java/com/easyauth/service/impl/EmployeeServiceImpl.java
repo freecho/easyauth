@@ -1,12 +1,11 @@
 package com.easyauth.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.easyauth.common.constant.MessageConstant;
 import com.easyauth.common.exception.InvalidDataException;
-import com.easyauth.common.utils.PageUtils;
+import com.easyauth.common.utils.PageUtil;
 import com.easyauth.domain.DTO.EmployeeDTO;
 import com.easyauth.domain.DTO.EmployeePageQueryDTO;
 import com.easyauth.domain.VO.EmployeeVO;
@@ -18,17 +17,13 @@ import com.easyauth.service.EmployeeRoleService;
 import com.easyauth.service.EmployeeService;
 import com.easyauth.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -148,7 +143,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
             employee.setRolesId(roles);
         });
 
-        return PageUtils.convert(pageResult, EmployeeVO.class);
+        return PageUtil.convert(pageResult, EmployeeVO.class);
     }
 
     public Page<EmployeeVO> conditionSearchWithRoleId(EmployeePageQueryDTO queryDTO) {
@@ -161,7 +156,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         page.setRecords(employeeList);
         page.setTotal(employeeList.size());
 
-        return PageUtils.convert(page, EmployeeVO.class);
+        return PageUtil.convert(page, EmployeeVO.class);
     }
 
     @Override
@@ -183,6 +178,6 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
             employee.setRolesId(roles);
         });
 
-        return PageUtils.convert(pageResult, EmployeeVO.class);
+        return PageUtil.convert(pageResult, EmployeeVO.class);
     }
 }

@@ -2,19 +2,14 @@ package com.easyauth.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.easyauth.common.result.Result;
-import com.easyauth.common.utils.PageUtils;
 import com.easyauth.domain.DTO.EmployeeDTO;
 import com.easyauth.domain.DTO.EmployeePageQueryDTO;
 import com.easyauth.domain.VO.EmployeeVO;
-import com.easyauth.domain.entity.Employee;
 import com.easyauth.service.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

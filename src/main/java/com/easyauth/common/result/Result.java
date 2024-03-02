@@ -8,11 +8,11 @@ import java.io.Serializable;
 
 @Data
 public class Result<T> implements Serializable {
-    private long code;
+    private Integer code;
     private String message;
     private T data;
 
-    protected Result(long code, String message, T data) {
+    protected Result(Integer code, String message, T data) {
         this.code = code;
         this.message = message;
         this.data = data;
@@ -33,6 +33,5 @@ public class Result<T> implements Serializable {
     public static <T> Result<T> failed(String message) {
         return new Result<T>(CodeConstant.FAILED, message, null);
     }
-
 
 }

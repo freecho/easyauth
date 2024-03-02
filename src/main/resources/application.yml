@@ -34,3 +34,8 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
   mapper-locations: classpath:/mapper/**/*.xml
+
+jwt:
+    secretKey: "2507544221" #token加密密钥
+    ttlMillis: "604800" #token过期时间：7天
+    tokenHeader: Authorization #JWT存储的请求头

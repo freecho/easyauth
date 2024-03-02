@@ -5,17 +5,16 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.easyauth.common.constant.MessageConstant;
 import com.easyauth.common.exception.InvalidDataException;
-import com.easyauth.common.utils.PageUtils;
+import com.easyauth.common.utils.PageUtil;
 import com.easyauth.domain.DTO.UserDTO;
+import com.easyauth.domain.DTO.UserFormLoginDTO;
 import com.easyauth.domain.DTO.UserPageQueryDTO;
-import com.easyauth.domain.VO.EmployeeVO;
 import com.easyauth.domain.VO.UserVO;
 import com.easyauth.domain.entity.*;
 import com.easyauth.mapper.UserMapper;
 import com.easyauth.service.RoleService;
 import com.easyauth.service.UserRoleService;
 import com.easyauth.service.UserService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -142,7 +141,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             user.setRolesId(roles);
         });
 
-        return PageUtils.convert(pageResult, UserVO.class);
+        return PageUtil.convert(pageResult, UserVO.class);
     }
 
     public Page<UserVO> conditionSearchWithRoleId(UserPageQueryDTO dto) {
@@ -155,7 +154,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         page.setRecords(userList);
         page.setTotal(userList.size());
 
-        return PageUtils.convert(page, UserVO.class);
+        return PageUtil.convert(page, UserVO.class);
     }
 
     @Override
@@ -177,6 +176,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             user.setRolesId(roles);
         });
 
-        return PageUtils.convert(pageResult, UserVO.class);
+        return PageUtil.convert(pageResult, UserVO.class);
+    }
+
+    @Override
+    public String formLogin(UserFormLoginDTO dto) {
+
+        return null;
     }
 }
