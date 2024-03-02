@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "员工表")
 @Slf4j
 public class EmployeeController {
-    //TODO 动态条件查询增加角色字段
+
     @Autowired
     private EmployeeService employeeService;
 
@@ -49,7 +49,11 @@ public class EmployeeController {
     @Operation(summary = "员工分页条件查询", description = "current必须提供，size默认为10")
     @GetMapping("/conditionSearch")
     public Result<Page<EmployeeVO>> conditionSearch(EmployeePageQueryDTO dto) {
-        return Result.success(employeeService.conditionSearch(dto));
+        //  如果没有角色id，分开查询两个表即可
+        if (dto.getRoleIds() == null || dto.getRoleIds().isEmpty())
+            return Result.success(employeeService.conditionSearchWithOutRoleId(dto));
+        //  如果有角色id，使用连表查询
+        return Result.success(employeeService.conditionSearchWithRoleId(dto));
     }
 
 

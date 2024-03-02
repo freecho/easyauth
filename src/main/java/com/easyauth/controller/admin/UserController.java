@@ -22,6 +22,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    //TODO 增加角色条件
     @Operation(summary = "条件查询用户")
     @GetMapping("/conditionSearch")
     public Result<Page<UserVO>> conditionSearch(UserPageQueryDTO dto) {

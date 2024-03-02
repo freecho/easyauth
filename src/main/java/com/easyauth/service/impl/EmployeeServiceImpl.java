@@ -1,6 +1,7 @@
 package com.easyauth.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.easyauth.common.constant.MessageConstant;
@@ -16,6 +17,7 @@ import com.easyauth.mapper.EmployeeMapper;
 import com.easyauth.service.EmployeeRoleService;
 import com.easyauth.service.EmployeeService;
 import com.easyauth.service.RoleService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,10 +25,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> implements EmployeeService {
+
+    @Autowired
+    private EmployeeMapper employeeMapper;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -109,13 +118,13 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
     }
 
     /**
-     * 员工动态条件查询
+     * 员工动态条件查询(不包含角色条件)
      *
      * @param dto
      * @return
      */
     @Override
-    public Page<EmployeeVO> conditionSearch(EmployeePageQueryDTO dto) {
+    public Page<EmployeeVO> conditionSearchWithOutRoleId(EmployeePageQueryDTO dto) {
         Page<Employee> page = new Page<>(dto.getCurrent(), dto.getSize());
         LambdaQueryWrapper<Employee> wrapper = new LambdaQueryWrapper<>();
 
@@ -126,6 +135,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
 
         List<EmployeeRole> roleList = employeeRoleService.list();
 
+        //  添加角色数据
         pageResult.getRecords().forEach(employee -> {
             List<Long> roles = new ArrayList<>();
 
@@ -139,6 +149,19 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         });
 
         return PageUtils.convert(pageResult, EmployeeVO.class);
+    }
+
+    public Page<EmployeeVO> conditionSearchWithRoleId(EmployeePageQueryDTO queryDTO) {
+        List<Employee> employeeList = this.baseMapper.pageWithRolesId(queryDTO);
+        int start = Math.min((int) ((queryDTO.getCurrent() - 1) * queryDTO.getSize()), employeeList.size());
+        int end = Math.min((int) (start + queryDTO.getSize()), employeeList.size());
+        employeeList.subList(start, end);
+
+        Page<Employee> page = new Page<>(queryDTO.getCurrent(), queryDTO.getSize());
+        page.setRecords(employeeList);
+        page.setTotal(employeeList.size());
+
+        return PageUtils.convert(page, EmployeeVO.class);
     }
 
     @Override

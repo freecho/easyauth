@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easyauth.mapper.EmployeeMapper">
+
+    <resultMap id="EmployeeWithRolesMap" type="com.easyauth.domain.entity.Employee">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="email" property="email"/>
+        <result column="last_login" property="lastLogin"/>
+        <result column="register_time" property="registerTime"/>
+        <result column="status" property="status"/>
+        <collection property="rolesId" ofType="java.lang.Long" column="id" select="selectRolesByEmployeeId"/>
+    </resultMap>
+
+    <select id="selectRolesByEmployeeId" resultType="java.lang.Long">
+        SELECT role_id
+        FROM employee_role
+        WHERE employee_id = #{id}
+    </select>
+
+    <select id="pageWithRolesId" resultMap="EmployeeWithRolesMap">
+        <bind name="size" value="dto.getRoleIds().size()"/>
+        SELECT DISTINCT e.*
+        FROM employee e
+        LEFT JOIN employee_role er ON e.id = er.employee_id
+        <where>
+            <if test="dto.username != null and dto.username != ''">
+                AND e.username LIKE CONCAT('%', #{dto.username}, '%')
+            </if>
+            <if test="dto.email != null and dto.email != ''">
+                AND e.email LIKE CONCAT('%', #{dto.email}, '%')
+            </if>
+            <!-- RolesId一定不为空，查找包含dto中角色集合的员工 -->
+            <if test="dto.roleIds != null">
+                AND er.role_id IN
+                <foreach collection="dto.roleIds" item="roleId" open="(" separator="," close=")">
+                    #{roleId}
+                </foreach>
+                GROUP BY e.id
+                HAVING COUNT(DISTINCT er.role_id) &gt;= #{size}
+            </if>
+        </where>
+    </select>
+
+</mapper>
