@@ -1,9 +1,10 @@
-package com.easyauth.security.filter;
+package com.easyauth.security.component;
 
 import com.easyauth.common.constant.CodeConstant;
 import com.easyauth.common.constant.MessageConstant;
 import com.easyauth.common.result.Result;
 import com.easyauth.common.utils.JwtUtil;
+import com.easyauth.security.exception.JwtAuthenticationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -33,12 +34,9 @@ public class JwtFilter extends OncePerRequestFilter {
     @Value("${jwt.tokenHeader}")
     private String tokenHeader;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+                                    HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, JwtAuthenticationException {
         //TODO 完善路径的判断
 
         // 放行OPTIONS请求
@@ -57,26 +55,21 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
         String authToken = request.getHeader(tokenHeader);
-        if (authToken != null) {
-            Claims claims = jwtUtil.parseJWT(authToken);
-            log.info("用户已登入: {}", claims);
-            // 放行
-            filterChain.doFilter(request, response);
-        } else {
-            // 未登录
+        Claims claims = null;
 
-            // 拦截请求并返回未登录信息
-            response.setContentType("application/json;charset=UTF-8");
-
-            response.setStatus(CodeConstant.UNAUTHORIZED);
-
-            Result<String> result = Result.failed(MessageConstant.USER_NOT_LOGIN);
-
-            response.getWriter().write(objectMapper.writeValueAsString(result));
-
+        try {
+            if (authToken != null) {
+                claims = jwtUtil.parseJWT(authToken);
+                log.info("用户已登入: {}", claims);
+            } else {
+                log.info("用户未登入");
+                throw new JwtAuthenticationException(MessageConstant.UNAUTHORIZED);
+            }
+        } catch (Exception e) {
+            throw new JwtAuthenticationException(e.getMessage());
         }
 
-
+        filterChain.doFilter(request, response);
     }
 
 

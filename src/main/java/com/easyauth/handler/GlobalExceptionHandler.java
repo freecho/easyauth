@@ -4,7 +4,10 @@ import com.easyauth.common.constant.MessageConstant;
 import com.easyauth.common.exception.BaseException;
 import com.easyauth.common.exception.BeanConvertException;
 import com.easyauth.common.result.Result;
+import com.easyauth.security.exception.JwtAuthenticationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

@@ -25,8 +25,6 @@
 - 角色权限关联表 role_permission
 
 ### 模型图
-
-[//]: # (TODO 更新模型图)
 ![](./docs/img/RBAC_model.png)
 
 ### 认证
@@ -43,9 +41,8 @@
 
 ### 逻辑步骤
 
-1. 通过spring security的自定义jwt过滤器来实现对用户的认证，解析jwt再从redis查询权限信息
-2. 根据当前请求的URL和http_method再从redis中查询所需要的权限
-3. 根据用户的权限和所需要的权限进行对比，判断用户是否有权限访问该资源
+1. 通过spring security的自定义jwt过滤器来实现对用户的认证，将解析token后的信息存入SecurityContext
+2. 将用户的授权交给自定义的AccessDecisionManager（根据当前请求的URL和http_method从redis中查询所需要的权限，再根据SecurityContext和所需要的权限从redis查询是否匹配）
 
 ### JWT
 
@@ -58,9 +55,11 @@
 }
 ```
 
-### redis
+### redis相关实现
 
-1. 用户权限信息
+1. 用户权限信息(UserDetails)
+
+说明：jwt解析后存出SecurityContext，根据SecurityContext向redis查询
 
 (identity:id)`key`: `user:125`
 

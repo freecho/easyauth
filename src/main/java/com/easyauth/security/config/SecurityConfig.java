@@ -1,6 +1,8 @@
 package com.easyauth.security.config;
 
-import com.easyauth.security.filter.JwtFilter;
+import com.easyauth.security.component.JwtFilter;
+import com.easyauth.security.component.RestAuthenticationEntryPoint;
+import com.easyauth.security.component.RestfulAccessDeniedHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
@@ -20,6 +23,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     @Autowired
     private JwtFilter jwtFilter;
+
+    @Autowired
+    private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+
+    @Autowired
+    private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -32,14 +41,18 @@ public class SecurityConfig {
         // 关闭session
         http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        //添加自定义的过滤器
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        // 添加自定义的过滤器
+        http.addFilterAfter(jwtFilter, ExceptionTranslationFilter.class); // 放在ExceptionTranslationFilter之后，确保异常交给restAuthenticationEntryPoint处理
+
+        // 配置异常处理
+        http.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(restAuthenticationEntryPoint)
+                .accessDeniedHandler(restfulAccessDeniedHandler));
 
 
-        // 配置放行规则
+        //TODO 完善 配置放行规则
         http.authorizeHttpRequests(requests -> requests.requestMatchers("/hello/**").authenticated()
                 .anyRequest().permitAll());
-        
+
         // 配置跨域,默认开启所有跨域请求
         http.cors(Customizer.withDefaults());
 
