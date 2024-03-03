@@ -1,5 +1,6 @@
 package com.easyauth.security;
 
+import lombok.Data;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -9,8 +10,16 @@ import java.util.Collection;
 
 /**
  * 自定义认证对象
+ * 仅仅使用 identity和 id （解析自jwt）
  */
+@Data
 public class AuthAuthentication implements Authentication {
+
+    // 身份：user,employee
+    private String identity;
+
+    private Long id;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

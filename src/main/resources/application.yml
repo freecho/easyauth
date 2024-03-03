@@ -28,6 +28,11 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
 
 mybatis-plus:
   configuration:
@@ -39,3 +44,4 @@ jwt:
     secretKey: "2507544221" #token加密密钥
     ttlMillis: "604800" #token过期时间：7天
     tokenHeader: Authorization #JWT存储的请求头
+

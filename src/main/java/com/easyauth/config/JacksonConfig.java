@@ -22,13 +22,13 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKN
  * Jackson配置类
  */
 @Configuration
-public class JacksonObjectMapper extends ObjectMapper {
+public class JacksonConfig extends ObjectMapper {
 
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
     public static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
     public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss";
 
-    public JacksonObjectMapper() {
+    public JacksonConfig() {
         super();
         //收到未知属性时不报异常
         this.configure(FAIL_ON_UNKNOWN_PROPERTIES, false);

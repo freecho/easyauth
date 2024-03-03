@@ -2,21 +2,20 @@ package com.easyauth.common.result;
 
 import com.easyauth.common.constant.CodeConstant;
 import com.easyauth.common.constant.MessageConstant;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Result<T> implements Serializable {
     private Integer code;
     private String message;
     private T data;
 
-    protected Result(Integer code, String message, T data) {
-        this.code = code;
-        this.message = message;
-        this.data = data;
-    }
 
     public static <T> Result<T> success() {
         return new Result<T>(CodeConstant.SUCCESS, MessageConstant.SUCCESS, null);

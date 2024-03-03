@@ -1,5 +1,6 @@
 package com.easyauth.security.config;
 
+import com.easyauth.security.component.AuthAuthorizationManager;
 import com.easyauth.security.component.JwtFilter;
 import com.easyauth.security.component.RestAuthenticationEntryPoint;
 import com.easyauth.security.component.RestfulAccessDeniedHandler;
@@ -30,6 +31,9 @@ public class SecurityConfig {
     @Autowired
     private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
 
+    @Autowired
+    private AuthAuthorizationManager authAuthorizationManager;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // 关闭csrf
@@ -49,7 +53,7 @@ public class SecurityConfig {
                 .accessDeniedHandler(restfulAccessDeniedHandler));
 
 
-        //TODO 完善 配置放行规则
+        //TODO 完善 配置放行规则 配置authAuthorizationManager
         http.authorizeHttpRequests(requests -> requests.requestMatchers("/hello/**").authenticated()
                 .anyRequest().permitAll());
 
