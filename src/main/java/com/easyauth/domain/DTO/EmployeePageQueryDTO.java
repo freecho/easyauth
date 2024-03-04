@@ -4,9 +4,9 @@ import java.util.List;
 
 @Data
 public class EmployeePageQueryDTO {
-    Long current;
-    Long size = 10L;
+    Integer current;
+    Integer size = 10;
     String username;
     String email;
-    List<Long> roleIds;
+    List<Integer> roleIds;
 }

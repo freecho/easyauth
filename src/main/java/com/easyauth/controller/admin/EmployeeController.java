@@ -37,7 +37,7 @@ public class EmployeeController {
 
     @Operation(summary = "员工列表")
     @GetMapping("/list")
-    public Result<Page<EmployeeVO>> getList(Long current, Long size) {
+    public Result<Page<EmployeeVO>> getList(Integer current,@RequestParam(required = false,defaultValue = "10") Integer size) {
         return Result.success(employeeService.getList(current, size));
     }
 

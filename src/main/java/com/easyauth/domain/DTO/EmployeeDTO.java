@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class EmployeeDTO {
 
-    Long id;
+    Integer id;
 
     String username;
 
@@ -16,8 +16,8 @@ public class EmployeeDTO {
 
     String email;
 
-    Long status;
+    Integer status;
 
-    List<Long> roleIds;
+    List<Integer> roleIds;
 
 }

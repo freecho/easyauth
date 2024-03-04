@@ -14,8 +14,8 @@ import lombok.Data;
 @TableName("role")
 public class Role {
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Integer id;
     private String name;
     private String description;
-    private Long status;
+    private Integer status;
 }

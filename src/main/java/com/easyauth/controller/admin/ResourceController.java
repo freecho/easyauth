@@ -34,7 +34,7 @@ public class ResourceController {
 
     @Operation(summary = "删除资源")
     @DeleteMapping
-    public Result<String> deleteById(long id) {
+    public Result<String> deleteById(Integer id) {
         resourceService.removeById(id);
         return Result.success();
     }
@@ -47,7 +47,7 @@ public class ResourceController {
 
     @Operation(summary = "资源列表")
     @GetMapping("/list")
-    public Result<Page<Resource>> getList(int current, int size) {
+    public Result<Page<Resource>> getList(Integer current,@RequestParam(required = false,defaultValue = "10") Integer size) {
         Page<Resource> page = new Page<>(current, size);
         Page<Resource> pageResult = resourceService.page(page);
         return Result.success(pageResult);

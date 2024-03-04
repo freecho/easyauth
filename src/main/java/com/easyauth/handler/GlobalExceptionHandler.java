@@ -5,6 +5,7 @@ import com.easyauth.common.exception.BaseException;
 import com.easyauth.common.exception.BeanConvertException;
 import com.easyauth.common.result.Result;
 import com.easyauth.security.exception.JwtAuthenticationException;
+import jakarta.servlet.ServletException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
@@ -52,6 +53,17 @@ public class GlobalExceptionHandler {
     public Result<String> exceptionHandler(NullPointerException e) {
         log.error("异常信息：{}", e.getMessage());
         return Result.failed(MessageConstant.VALIDATE_FAILED);
+    }
+
+    /**
+     * 请求错误
+     * @param e
+     * @return
+     */
+    @ExceptionHandler
+    public Result<String> exceptionHandler(ServletException e) {
+        log.error("异常信息：{}", e.getMessage());
+        return Result.failed(MessageConstant.BadRequest);
     }
 
 }

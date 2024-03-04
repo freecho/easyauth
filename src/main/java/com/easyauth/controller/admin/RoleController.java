@@ -34,7 +34,7 @@ public class RoleController {
 
     @Operation(summary = "角色列表")
     @GetMapping("/list")
-    public Result<Page<Role>> getList(int current, @RequestParam(required = false, defaultValue = "10") int size) {
+    public Result<Page<Role>> getList(int current, @RequestParam(required = false, defaultValue = "10") Integer size) {
         Page<Role> page = new Page<>(current, size);
         Page<Role> pageResult = roleService.page(page);
         return Result.success(pageResult);

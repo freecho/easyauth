@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @TableName("resource")
 public class Resource {
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Integer id;
     private String name;
     private String httpMethod;
     private String path;

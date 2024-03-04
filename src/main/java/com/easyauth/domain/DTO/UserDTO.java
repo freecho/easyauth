@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class UserDTO {
-    Long id;
+    Integer id;
 
     String username;
 
@@ -14,8 +14,8 @@ public class UserDTO {
 
     String email;
 
-    Long status;
+    Integer status;
 
-    List<Long> roleIds;
+    List<Integer> roleIds;
 
 }

@@ -9,9 +9,9 @@ import lombok.Data;
 @TableName("employee_role")
 public class EmployeeRole {
     @TableId(value = "id",type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
-    private Long employeeId;
+    private Integer employeeId;
 
-    private Long roleId;
+    private Integer roleId;
 }

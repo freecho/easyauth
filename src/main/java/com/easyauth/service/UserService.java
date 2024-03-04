@@ -10,7 +10,7 @@ import com.easyauth.domain.entity.User;
 
 public interface UserService extends IService<User> {
 
-    void switchStatus(Long id, Long status);
+    void switchStatus(Integer id, Integer status);
 
     void add(UserDTO userDTO);
 
@@ -20,7 +20,7 @@ public interface UserService extends IService<User> {
 
     Page<UserVO> conditionSearchWithOutRoleId(UserPageQueryDTO dto);
 
-    Page<UserVO> getList(Long current, Long size);
+    Page<UserVO> getList(Integer current, Integer size);
 
     String formLogin(UserFormLoginDTO dto);
 }

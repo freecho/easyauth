@@ -16,9 +16,9 @@ public class JwtAuthenticationToken implements Authentication {
     // 身份：user,employee
     private String identity;
 
-    private String id;
+    private Integer id;
 
-    public JwtAuthenticationToken(String identity, String id) {
+    public JwtAuthenticationToken(String identity, Integer id) {
         this.identity = identity;
         this.id = id;
     }

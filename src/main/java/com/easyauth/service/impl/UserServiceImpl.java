@@ -40,7 +40,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 
     @Override
-    public void switchStatus(Long id, Long status) {
+    public void switchStatus(Integer id, Integer status) {
         User user = this.getById(id);
         user.setStatus(status);
         this.updateById(user);
@@ -130,7 +130,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         List<UserRole> roleList = userRoleService.list();
 
         pageResult.getRecords().forEach(user -> {
-            List<Long> roles = new ArrayList<>();
+            List<Integer> roles = new ArrayList<>();
 
             roleList.forEach(userRole -> {
                 if (userRole.getUserId().equals(user.getId())) {
@@ -158,14 +158,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public Page<UserVO> getList(Long current, Long size) {
+    public Page<UserVO> getList(Integer current, Integer size) {
         Page<User> page = new Page<>(current, size);
         Page<User> pageResult = this.page(page);
 
         List<UserRole> roleList = userRoleService.list();
 
         pageResult.getRecords().forEach(user -> {
-            List<Long> roles = new ArrayList<>();
+            List<Integer> roles = new ArrayList<>();
 
             roleList.forEach(role -> {
                 if (role.getUserId().equals(user.getId())) {

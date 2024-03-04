@@ -10,12 +10,12 @@ import java.util.List;
 
 @Data
 public class UserVO {
-    private Long id;
+    private Integer id;
     private String username;
     private String email;
     private LocalDateTime lastLogin;
     private LocalDateTime registerTime;
-    private Long status;
+    private Integer status;
 
-    private List<Long> rolesId;
+    private List<Integer> rolesId;
 }

@@ -45,7 +45,7 @@
 
 ### redis相关实现
 
-1. 用户权限信息(UserDetails)
+1. 用户权限信息(UserDetail)
 
 说明：jwt解析后存出SecurityContext，根据SecurityContext向redis查询
 
@@ -59,6 +59,7 @@ JSON:
 {
   "id": 1,
   "username": "admin",
+  "email": "123456@qq.com",
   "rolesId": [
     1,
     2
@@ -76,6 +77,6 @@ JSON:
 
 3. 权限匹配验证(1->有权限, 0->无权限)
 
-(resource_id:roleId)`key`: `8:1`
+(roleId:resource_id)`key`: `8:1`
 
-(0 `or` 1)`value`: `1`
+(true `or` false)`value`: `true`

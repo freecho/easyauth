@@ -132,7 +132,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
 
         //  添加角色数据
         pageResult.getRecords().forEach(employee -> {
-            List<Long> roles = new ArrayList<>();
+            List<Integer> roles = new ArrayList<>();
 
             roleList.forEach(role -> {
                 if (role.getEmployeeId().equals(employee.getId())) {
@@ -160,14 +160,14 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
     }
 
     @Override
-    public Page<EmployeeVO> getList(Long current, Long size) {
+    public Page<EmployeeVO> getList(Integer current, Integer size) {
         Page<Employee> page = new Page<>(current, size);
         Page<Employee> pageResult = this.page(page);
 
         List<EmployeeRole> roleList = employeeRoleService.list();
 
         pageResult.getRecords().forEach(employee -> {
-            List<Long> roles = new ArrayList<>();
+            List<Integer> roles = new ArrayList<>();
 
             roleList.forEach(role -> {
                 if (role.getEmployeeId().equals(employee.getId())) {

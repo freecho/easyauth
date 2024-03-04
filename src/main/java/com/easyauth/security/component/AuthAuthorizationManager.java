@@ -2,6 +2,7 @@ package com.easyauth.security.component;
 
 import com.easyauth.common.constant.MessageConstant;
 import com.easyauth.config.IgnoreUrlsConfig;
+import com.easyauth.domain.entity.UserDetail;
 import com.easyauth.security.JwtAuthenticationToken;
 import com.easyauth.security.exception.JwtAuthenticationException;
 import com.easyauth.service.RedisService;
@@ -47,27 +48,33 @@ public class AuthAuthorizationManager implements AuthorizationManager<RequestAut
         try {
             authentication = (JwtAuthenticationToken) authenticationSupplier.get();
         } catch (Exception e) {
-            // token为空
-            log.info("token为空!!! {} URI: {}", inWhitelist, request.getRequestURI());
             throw new JwtAuthenticationException(MessageConstant.UNAUTHORIZED);
         }
 
 
-        String userId = authentication.getId();
-        String itentity = authentication.getIdentity();
+        Integer userId = authentication.getId();
+        String identity = authentication.getIdentity();
         log.info("用户: {} 请求: {} 方法：{}", userId, request.getRequestURI(), request.getMethod());
 
-        String resourceId = (String) redisService.get(request.getMethod() + ":" + request.getRequestURI());
+        Integer resourceId = (Integer) redisService.get(request.getMethod() + ":" + request.getRequestURI());
         if (resourceId == null) {
             log.info("资源未找到: {}", request.getRequestURI());
             return new AuthorizationDecision(false);
         } else {
-            //TODO 完善权限判断
             log.info("资源找到: {}", request.getRequestURI());
+            // 从redis中获取用户信息 identity:userId
+            UserDetail userDetail = (UserDetail) redisService.get(identity + ":" + userId);
+            // 判断用户是否有权限 redis 查找 roleId:resourceId
+            boolean hasAuthority = userDetail.getRolesId().stream().anyMatch(roleId -> (boolean) redisService.get(roleId + ":" + resourceId));
 
-
-            return new AuthorizationDecision(true);
+            if (!hasAuthority) {
+                log.info("用户: {} 无权限访问: {}", userId, request.getRequestURI());
+                return new AuthorizationDecision(false);
+            }
         }
 
+        return new AuthorizationDecision(true);
     }
+
 }
+

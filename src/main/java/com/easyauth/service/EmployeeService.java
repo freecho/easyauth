@@ -12,7 +12,7 @@ public interface EmployeeService extends IService<Employee> {
 
     void edit(EmployeeDTO employeeDTO);
 
-    Page<EmployeeVO> getList(Long current, Long size);
+    Page<EmployeeVO> getList(Integer current, Integer size);
 
     Page<EmployeeVO> conditionSearchWithOutRoleId(EmployeePageQueryDTO dto);
 

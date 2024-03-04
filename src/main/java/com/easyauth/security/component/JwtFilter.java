@@ -65,7 +65,7 @@ public class JwtFilter extends OncePerRequestFilter {
             if (authToken != null) {
                 claims = jwtUtil.parseJWT(authToken);
                 // 获取用户身份
-                String id = claims.get("id", String.class);
+                Integer id = claims.get("id", Integer.class);
                 String identity = claims.get("identity", String.class);
                 JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(identity, id);
                 // 设置用户身份

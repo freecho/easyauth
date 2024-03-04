@@ -18,14 +18,14 @@ import java.util.List;
 @TableName("user")
 public class User {
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Integer id;
     private String username;
     private String password;
     private String email;
     private LocalDateTime lastLogin;
     private LocalDateTime registerTime;
-    private Long status;
+    private Integer status;
 
     @TableField(exist = false)
-    private List<Long> rolesId;
+    private List<Integer> rolesId;
 }
