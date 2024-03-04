@@ -6,24 +6,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-
 /**
- * 自定义返回结果：没有权限访问时
+ * 自定义返回结果：未登录或登录过期
  */
 @Component
-public class RestfulAccessDeniedHandler implements AccessDeniedHandler {
+@Slf4j
+public class AuthAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Autowired
     private ObjectMapper objectMapper;
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Cache-Control", "no-cache");
         response.setCharacterEncoding("UTF-8");
@@ -31,9 +32,8 @@ public class RestfulAccessDeniedHandler implements AccessDeniedHandler {
 
         response.setStatus(CodeConstant.UNAUTHORIZED);
 
-        Result<String> result = Result.failed(accessDeniedException.getMessage());
+        Result<String> result = Result.failed(authException.getMessage());
         response.getWriter().println(objectMapper.writeValueAsString(result));
         response.getWriter().flush();
-
     }
 }

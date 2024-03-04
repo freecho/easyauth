@@ -2,8 +2,8 @@ package com.easyauth.security.config;
 
 import com.easyauth.security.component.AuthAuthorizationManager;
 import com.easyauth.security.component.JwtFilter;
-import com.easyauth.security.component.RestAuthenticationEntryPoint;
-import com.easyauth.security.component.RestfulAccessDeniedHandler;
+import com.easyauth.security.component.AuthAuthenticationEntryPoint;
+import com.easyauth.security.component.AuthAccessDeniedHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @EnableWebSecurity
@@ -26,10 +25,10 @@ public class SecurityConfig {
     private JwtFilter jwtFilter;
 
     @Autowired
-    private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+    private AuthAuthenticationEntryPoint authAuthenticationEntryPoint;
 
     @Autowired
-    private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
+    private AuthAccessDeniedHandler authAccessDeniedHandler;
 
     @Autowired
     private AuthAuthorizationManager authAuthorizationManager;
@@ -49,13 +48,15 @@ public class SecurityConfig {
         http.addFilterAfter(jwtFilter, ExceptionTranslationFilter.class); // 放在ExceptionTranslationFilter之后，确保异常交给restAuthenticationEntryPoint处理
 
         // 配置异常处理
-        http.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(restAuthenticationEntryPoint)
-                .accessDeniedHandler(restfulAccessDeniedHandler));
+        http.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(authAuthenticationEntryPoint)
+                .accessDeniedHandler(authAccessDeniedHandler));
 
 
-        //TODO 完善 配置放行规则 配置authAuthorizationManager
-        http.authorizeHttpRequests(requests -> requests.requestMatchers("/hello/**").authenticated()
-                .anyRequest().permitAll());
+        // 配置权限管理器
+        http.authorizeHttpRequests(requests ->
+                requests.requestMatchers("/auth/**").permitAll()
+                        .anyRequest().access(authAuthorizationManager)
+        );
 
         // 配置跨域,默认开启所有跨域请求
         http.cors(Customizer.withDefaults());

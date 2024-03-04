@@ -41,7 +41,19 @@ mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
 
 jwt:
-    secretKey: "2507544221" #token加密密钥
-    ttlMillis: "604800" #token过期时间：7天
-    tokenHeader: Authorization #JWT存储的请求头
+  secretKey: "2507544221" #token加密密钥
+  ttlMillis: "604800000" #token过期时间：7天
+  tokenHeader: Authorization #JWT存储的请求头
 
+secure:
+  ignored:
+    urls: #安全路径白名单
+      - /auth/**
+      - /**/*.html
+      - /**/*.js
+      - /**/*.css
+      - /**/*.png
+      - /favicon.ico
+      - /webjars/**
+      - /v3/api-docs/**
+      - /error/**

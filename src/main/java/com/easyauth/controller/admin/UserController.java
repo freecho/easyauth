@@ -57,7 +57,6 @@ public class UserController {
 
     @Operation(summary = "用户列表", description = "current必须提供，size默认为10")
     @GetMapping("/list")
-    @Cacheable(value = "userList", key = "#current")
     public Result<Page<UserVO>> getList(Long current, @RequestParam(required = false, defaultValue = "10") Long size) {
         return Result.success(userService.getList(current, size));
     }
