@@ -5,6 +5,7 @@ import com.easyauth.common.result.Result;
 import com.easyauth.domain.DTO.UserDTO;
 import com.easyauth.domain.DTO.UserPageQueryDTO;
 import com.easyauth.domain.VO.UserVO;
+import com.easyauth.service.RedisService;
 import com.easyauth.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private RedisService redisService;
 
     @Operation(summary = "用户分页条件查询", description = "current必须提供，size默认为10")
     @GetMapping("/conditionSearch")
@@ -38,6 +41,7 @@ public class UserController {
     @PutMapping
     public Result<String> edit(@RequestBody UserDTO userDTO) {
         userService.edit(userDTO);
+        redisService.del("user:" + userDTO.getId());
         return Result.success();
     }
 
@@ -52,6 +56,7 @@ public class UserController {
     @PutMapping("/status")
     public Result<String> switchStatus(Integer id, Integer status) {
         userService.switchStatus(id, status);
+        redisService.del("user:" + id);
         return Result.success();
     }
 

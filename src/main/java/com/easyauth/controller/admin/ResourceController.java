@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.easyauth.common.result.Result;
 import com.easyauth.domain.DTO.ResourcePageQueryDTO;
 import com.easyauth.domain.entity.Resource;
+import com.easyauth.service.RedisService;
 import com.easyauth.service.ResourceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,24 +19,32 @@ public class ResourceController {
 
     @Autowired
     private ResourceService resourceService;
+    @Autowired
+    private RedisService redisService;
 
     @Operation(summary = "添加资源")
     @PostMapping
     public Result<String> add(@RequestBody Resource resource) {
         resourceService.save(resource);
+        redisService.set(resource.getHttpMethod()+":"+resource.getPath(),resource.getId());
         return Result.success();
     }
 
-    @Operation(summary = "修改资源")
+    @Operation(summary = "根据Id修改资源")
     @PutMapping
     public Result<String> update(@RequestBody Resource resource) {
+        Resource oldResource = resourceService.getById(resource.getId());
+        redisService.del(oldResource.getHttpMethod()+":"+oldResource.getPath());
         resourceService.updateById(resource);
+        redisService.set(resource.getHttpMethod()+":"+resource.getPath(),resource.getId());
         return Result.success();
     }
 
     @Operation(summary = "删除资源")
     @DeleteMapping
     public Result<String> deleteById(Integer id) {
+        Resource resource = resourceService.getById(id);
+        redisService.del(resource.getHttpMethod()+":"+resource.getPath());
         resourceService.removeById(id);
         return Result.success();
     }

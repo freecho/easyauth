@@ -63,7 +63,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public Result<String> exceptionHandler(ServletException e) {
         log.error("异常信息：{}", e.getMessage());
-        return Result.failed(MessageConstant.BadRequest);
+        return Result.failed(MessageConstant.Bad_Request);
     }
 
 }

@@ -1,10 +1,12 @@
 package com.easyauth.security.component;
 
 import com.easyauth.common.constant.MessageConstant;
+import com.easyauth.common.constant.NumberConstant;
 import com.easyauth.common.utils.JwtUtil;
 import com.easyauth.config.IgnoreUrlsConfig;
 import com.easyauth.security.JwtAuthenticationToken;
 import com.easyauth.security.exception.JwtAuthenticationException;
+import com.easyauth.service.RedisService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -31,9 +33,10 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtil jwtUtil;
-
     @Autowired
     private IgnoreUrlsConfig ignoreUrlsConfig;
+    @Autowired
+    private RedisService redisService;
 
     @Value("${jwt.tokenHeader}")
     private String tokenHeader;
@@ -67,6 +70,13 @@ public class JwtFilter extends OncePerRequestFilter {
                 // 获取用户身份
                 Integer id = claims.get("id", Integer.class);
                 String identity = claims.get("identity", String.class);
+                // 验证token是否过期
+                long jwtExpTime = claims.getExpiration().getTime() - System.currentTimeMillis();
+                long redisExpTime = redisService.getExpire(identity + ":" + id);
+                if (Math.abs(jwtExpTime - redisExpTime) > NumberConstant.Error_Time) {
+                    throw new JwtAuthenticationException(MessageConstant.UNAUTHORIZED);
+                }
+
                 JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(identity, id);
                 // 设置用户身份
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);

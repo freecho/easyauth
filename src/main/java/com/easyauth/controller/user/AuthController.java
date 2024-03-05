@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,12 +20,9 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private JwtUtil jwtUtil;
-
     @PostMapping("/formLogin")
     @Operation(summary = "表单登录", description = "返回token")
-    public Result<String> formLogin(UserFormLoginDTO dto) {
+    public Result<String> formLogin(@RequestBody UserFormLoginDTO dto) {
         return Result.success(userService.formLogin(dto));
     }
 

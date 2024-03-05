@@ -5,4 +5,6 @@ import com.easyauth.domain.entity.RolePermission;
 
 public interface RolePermissionService extends IService<RolePermission> {
     void delete(RolePermission rolePermission);
+
+    void removeByRoleId(Integer id);
 }

@@ -6,6 +6,7 @@ import com.easyauth.domain.DTO.EmployeeDTO;
 import com.easyauth.domain.DTO.EmployeePageQueryDTO;
 import com.easyauth.domain.VO.EmployeeVO;
 import com.easyauth.service.EmployeeService;
+import com.easyauth.service.RedisService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,8 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
+    @Autowired
+    private RedisService redisService;
 
     @Operation(summary = "添加员工")
     @PostMapping
@@ -32,6 +35,7 @@ public class EmployeeController {
     @PutMapping
     public Result<String> edit(@RequestBody EmployeeDTO employeeDTO) {
         employeeService.edit(employeeDTO);
+        redisService.del("employee:" + employeeDTO.getId());
         return Result.success();
     }
 

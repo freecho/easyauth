@@ -80,3 +80,7 @@ JSON:
 (roleId:resource_id)`key`: `8:1`
 
 (true `or` false)`value`: `true`
+
+### token刷新
+当需要重置token时，颁发新的token前，刷新redis数据，重新设置过期时间，保持redis数据过期时间==jwt的过期时间
+只要二者不一致就可以判断token过期（考虑通信延迟设置一个Error_Time来提供容错）

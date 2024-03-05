@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.easyauth.common.constant.MessageConstant;
+import com.easyauth.common.constant.NumberConstant;
 import com.easyauth.common.exception.InvalidDataException;
+import com.easyauth.common.utils.JwtUtil;
 import com.easyauth.common.utils.PageUtil;
 import com.easyauth.domain.DTO.UserDTO;
 import com.easyauth.domain.DTO.UserFormLoginDTO;
@@ -12,31 +14,38 @@ import com.easyauth.domain.DTO.UserPageQueryDTO;
 import com.easyauth.domain.VO.UserVO;
 import com.easyauth.domain.entity.*;
 import com.easyauth.mapper.UserMapper;
+import com.easyauth.service.RedisService;
 import com.easyauth.service.RoleService;
 import com.easyauth.service.UserRoleService;
 import com.easyauth.service.UserService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
+@Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
     @Autowired
     private RoleService roleService;
-
     @Autowired
     private UserRoleService userRoleService;
-
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private JwtUtil jwtUtil;
+    @Autowired
+    private RedisService redisService;
 
 
     @Override
@@ -181,7 +190,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public String formLogin(UserFormLoginDTO dto) {
+        // 验证数据
+        if (dto == null || dto.getUsername() == null || dto.getPassword() == null) {
+            throw new InvalidDataException(MessageConstant.VALIDATE_FAILED);
+        }
 
-        return null;
+        User user = this.getOne(new LambdaQueryWrapper<User>().eq(User::getUsername, dto.getUsername()));
+        if (user == null || !passwordEncoder.matches(dto.getPassword(), user.getPassword()) || user.getStatus() != 1) {
+            throw new InvalidDataException(MessageConstant.Login_Error);
+        }
+        // redis中存储用户信息
+        UserDetail userDetail = new UserDetail();
+        BeanUtils.copyProperties(user, userDetail);
+        List<Integer> rolesId = userRoleService.list(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId,
+                user.getId())).stream().map(UserRole::getRoleId).toList();
+        userDetail.setRolesId(rolesId);
+        redisService.set("user:" + user.getId(), userDetail, NumberConstant.Week_Seconds);
+
+        // 生成token
+        Map<String, Object> map = new HashMap<>();
+        map.put("identity", "user");
+        map.put("id", user.getId());
+        return jwtUtil.createJWT(map);
     }
 }

@@ -21,4 +21,12 @@ public class RolePermissionServiceImpl extends ServiceImpl<RolePermissionMapper,
 
         rolePermissionMapper.delete(queryWrapper);
     }
+
+    @Override
+    public void removeByRoleId(Integer id) {
+        LambdaQueryWrapper<RolePermission> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(RolePermission::getRoleId, id);
+
+        rolePermissionMapper.delete(queryWrapper);
+    }
 }

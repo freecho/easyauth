@@ -19,19 +19,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.AntPathMatcher;
 
 import javax.management.relation.RoleList;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @SpringBootTest
 class EasyauthApplicationTests {
-    //TODO 各表数据的修改/删除/更新 同步到 redis 可使用测试里的方法
 
     @Autowired
     private RedisService redisService;
@@ -48,13 +45,16 @@ class EasyauthApplicationTests {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Test
     void mytest3() {
-        Map map = new HashMap();
-        map.put("id", 88);
-        map.put("identity", "admin");
-        String token = jwtUtil.createJWT(map);
-        System.out.println(token);
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJpZGVudGl0eSI6InVzZXIiLCJpZCI6MSwiZXhwIjoxNzEwMjA5Njc2fQ.6jf3Ro-Xzv_AYCsC7DPWGNjt4_estEp4f6_YddYIIwU";
+        Claims claims = jwtUtil.parseJWT(token);
+        System.out.println((claims.getExpiration().getTime() - System.currentTimeMillis()) / 1000);
+
+        System.out.println(redisService.getExpire("user:1"));
     }
 
     @Test
