@@ -13,11 +13,17 @@ import com.easyauth.security.JwtAuthenticationToken;
 import com.easyauth.service.RedisService;
 import com.easyauth.service.ResourceService;
 import io.jsonwebtoken.Claims;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.AntPathMatcher;
@@ -48,13 +54,27 @@ class EasyauthApplicationTests {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Test
-    void mytest3() {
-        String token = "eyJhbGciOiJIUzI1NiJ9.eyJpZGVudGl0eSI6InVzZXIiLCJpZCI6MSwiZXhwIjoxNzEwMjA5Njc2fQ.6jf3Ro-Xzv_AYCsC7DPWGNjt4_estEp4f6_YddYIIwU";
-        Claims claims = jwtUtil.parseJWT(token);
-        System.out.println((claims.getExpiration().getTime() - System.currentTimeMillis()) / 1000);
+    @Autowired
+    private JavaMailSender mailSender;
 
-        System.out.println(redisService.getExpire("user:1"));
+    @Test
+    @Async
+    void contextLoads() {
+        // 解决本地DNS未配置 ip->域名场景下，邮件发送太慢的问题
+        System.getProperties().setProperty("mail.mime.address.usecanonicalhostname", "false");
+        // 获取 MimeMessage
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        Session session = mimeMessage.getSession();
+        // 设置 日志打印控制器
+        session.setDebug(true);
+        //  解决本地DNS未配置 ip->域名场景下，邮件发送太慢的问题
+        session.getProperties().setProperty("mail.smtp.localhost", "myComputer");
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("2507544221@qq.com");
+        message.setTo("2507544221@qq.com");
+        message.setText("test");
+        message.setSubject("测试邮件");
+        mailSender.send(message);
     }
 
     @Test

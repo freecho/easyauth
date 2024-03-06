@@ -1,3 +1,11 @@
+## 注意事项
+
+1. token失效：
+   设置了通信延迟设置一个Error_Time来提供容错在`com.easyauth.common.constant.NumberConstant`
+2. 用户权限：
+   普通用户注册后默认分配权限为4（普通用户），如需修改或修改了role表的相应数据，请在`com.easyauth.controller.user.AuthController`
+   中修改
+
 ## API
 
 符合RESTFUL规范，使用HTTP请求方法来实现对资源的操作。
@@ -25,6 +33,7 @@
 - 角色权限关联表 role_permission
 
 ### 模型图
+
 ![](./docs/img/RBAC_model.png)
 
 ### 逻辑步骤
@@ -82,5 +91,6 @@ JSON:
 (true `or` false)`value`: `true`
 
 ### token刷新
+
 当需要重置token时，颁发新的token前，刷新redis数据，重新设置过期时间，保持redis数据过期时间==jwt的过期时间
 只要二者不一致就可以判断token过期（考虑通信延迟设置一个Error_Time来提供容错）

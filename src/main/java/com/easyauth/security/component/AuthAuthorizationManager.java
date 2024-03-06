@@ -51,24 +51,20 @@ public class AuthAuthorizationManager implements AuthorizationManager<RequestAut
             throw new JwtAuthenticationException(MessageConstant.UNAUTHORIZED);
         }
 
-
         Integer userId = authentication.getId();
         String identity = authentication.getIdentity();
-        log.info("用户: {} 请求: {} 方法：{}", userId, request.getRequestURI(), request.getMethod());
 
         Integer resourceId = (Integer) redisService.get(request.getMethod() + ":" + request.getRequestURI());
         if (resourceId == null) {
-            log.info("资源未找到: {}", request.getRequestURI());
             return new AuthorizationDecision(false);
         } else {
-            log.info("资源找到: {}", request.getRequestURI());
             // 从redis中获取用户信息 identity:userId
             UserDetail userDetail = (UserDetail) redisService.get(identity + ":" + userId);
             // 判断用户是否有权限 redis 查找 roleId:resourceId
             boolean hasAuthority = userDetail.getRolesId().stream().anyMatch(roleId -> (boolean) redisService.get(roleId + ":" + resourceId));
 
             if (!hasAuthority) {
-                log.info("用户: {} 无权限访问: {}", userId, request.getRequestURI());
+                log.info("{}: {} 无权限访问: {}", identity, userId, request.getRequestURI());
                 return new AuthorizationDecision(false);
             }
         }

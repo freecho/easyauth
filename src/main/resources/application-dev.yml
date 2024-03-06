@@ -1,0 +1,51 @@
+spring:
+  security:
+    user:
+      password: "123456"
+      name: "admin"
+  datasource:
+    url: jdbc:mysql://localhost:3306/easy_auth?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+  mail:
+    debug: true
+    host: smtp.qq.com
+    username: 2507544221@qq.com
+    password: yhesdttpinblebje
+    port: 465
+    properties:
+      mail:
+        smtp:
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+          ssl:
+            enable: true
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+            fallback: false
+    default-encoding: utf-8
+    protocol: smtp
+
+server:
+  port: 5555
+
+jwt:
+  secretKey: "2507544221" #token加密密钥
+  ttlMillis: "604800000" #token过期时间：7天
+  tokenHeader: Authorization #JWT存储的请求头
+
+springdoc:
+  group-configs:
+    packages-to-scan: com.easyauth

@@ -2,9 +2,11 @@ package com.easyauth.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.easyauth.common.result.Result;
 import com.easyauth.domain.DTO.UserDTO;
 import com.easyauth.domain.DTO.UserFormLoginDTO;
 import com.easyauth.domain.DTO.UserPageQueryDTO;
+import com.easyauth.domain.DTO.UserRegisterDTO;
 import com.easyauth.domain.VO.UserVO;
 import com.easyauth.domain.entity.User;
 
@@ -23,4 +25,6 @@ public interface UserService extends IService<User> {
     Page<UserVO> getList(Integer current, Integer size);
 
     String formLogin(UserFormLoginDTO dto);
+
+    String register(UserRegisterDTO dto);
 }

@@ -1,5 +1,6 @@
-server:
-  port: 5555
+spring:
+  profiles:
+    active: dev
 
 springdoc:
   swagger-ui:
@@ -11,39 +12,18 @@ springdoc:
   group-configs:
     - group: 'default'
       paths-to-match: '/**'
-      packages-to-scan: com.easyauth
+#      packages-to-scan: com.easyauth
 
 knife4j:
   enable: true
   setting:
     language: zh_cn
 
-spring:
-  security:
-    user:
-      password: "123456"
-      name: "admin"
-  datasource:
-    url: jdbc:mysql://localhost:3306/easy_auth?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
-    username: root
-    password: 123456
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      database: 0
-
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
   mapper-locations: classpath:/mapper/**/*.xml
-
-jwt:
-  secretKey: "2507544221" #token加密密钥
-  ttlMillis: "604800000" #token过期时间：7天
-  tokenHeader: Authorization #JWT存储的请求头
 
 secure:
   ignored:

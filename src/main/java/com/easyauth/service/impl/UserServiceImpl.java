@@ -6,11 +6,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.easyauth.common.constant.MessageConstant;
 import com.easyauth.common.constant.NumberConstant;
 import com.easyauth.common.exception.InvalidDataException;
+import com.easyauth.common.result.Result;
 import com.easyauth.common.utils.JwtUtil;
 import com.easyauth.common.utils.PageUtil;
 import com.easyauth.domain.DTO.UserDTO;
 import com.easyauth.domain.DTO.UserFormLoginDTO;
 import com.easyauth.domain.DTO.UserPageQueryDTO;
+import com.easyauth.domain.DTO.UserRegisterDTO;
 import com.easyauth.domain.VO.UserVO;
 import com.easyauth.domain.entity.*;
 import com.easyauth.mapper.UserMapper;
@@ -212,5 +214,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         map.put("identity", "user");
         map.put("id", user.getId());
         return jwtUtil.createJWT(map);
+    }
+
+    @Override
+    public String register(UserRegisterDTO dto) {
+        User user = new User();
+        BeanUtils.copyProperties(dto, user);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // 默认角色
+        user.setRolesId(new ArrayList<Integer>(4));
+        this.save(user);
+        // 调用登录接口
+        UserFormLoginDTO userFormLoginDTO = new UserFormLoginDTO();
+        userFormLoginDTO.setUsername(dto.getUsername());
+        userFormLoginDTO.setPassword(dto.getPassword());
+        return this.formLogin(userFormLoginDTO);
     }
 }
