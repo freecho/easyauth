@@ -5,6 +5,7 @@ import com.easyauth.common.exception.BaseException;
 import com.easyauth.common.exception.BeanConvertException;
 import com.easyauth.common.result.Result;
 import com.easyauth.security.exception.JwtAuthenticationException;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.ServletException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
@@ -66,4 +67,14 @@ public class GlobalExceptionHandler {
         return Result.failed(MessageConstant.Bad_Request);
     }
 
+    /**
+     * 邮件发送异常
+     * @param e
+     * @return
+     */
+    @ExceptionHandler
+    public Result<String> exceptionHandler(MessagingException e) {
+        log.error("异常信息：{}", e.getMessage());
+        return Result.failed(MessageConstant.UNKNOWN_ERROR);
+    }
 }

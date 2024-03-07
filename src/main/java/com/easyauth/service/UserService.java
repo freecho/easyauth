@@ -26,5 +26,7 @@ public interface UserService extends IService<User> {
 
     String formLogin(UserFormLoginDTO dto);
 
-    String register(UserRegisterDTO dto);
+    Result<String> register(UserRegisterDTO dto);
+
+    boolean isExist(String username, String email);
 }

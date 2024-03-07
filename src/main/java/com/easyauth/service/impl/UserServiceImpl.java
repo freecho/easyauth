@@ -216,18 +216,39 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return jwtUtil.createJWT(map);
     }
 
+    /**
+     * 用户完成注册
+     *
+     * @param dto
+     * @return
+     */
     @Override
-    public String register(UserRegisterDTO dto) {
+    public Result<String> register(UserRegisterDTO dto) {
+        // 验证验证码
+        String code = dto.getCode();
+        if (code == null || !code.equals(redisService.get("email:" + dto.getEmail()))) {
+            return Result.failed(MessageConstant.Code_Error);
+        }
+        // 完成注册
         User user = new User();
         BeanUtils.copyProperties(dto, user);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        // 默认角色
-        user.setRolesId(new ArrayList<Integer>(4));
+        // 保存数据
         this.save(user);
+        UserRole userRole = new UserRole();
+        userRole.setUserId(user.getId());
+        userRole.setRoleId(4);
+        userRoleService.save(userRole);
         // 调用登录接口
         UserFormLoginDTO userFormLoginDTO = new UserFormLoginDTO();
         userFormLoginDTO.setUsername(dto.getUsername());
         userFormLoginDTO.setPassword(dto.getPassword());
-        return this.formLogin(userFormLoginDTO);
+        return Result.success(this.formLogin(userFormLoginDTO));
+    }
+
+    @Override
+    public boolean isExist(String username, String email) {
+        return this.getOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username)) != null
+                || this.getOne(new LambdaQueryWrapper<User>().eq(User::getEmail, email)) != null;
     }
 }

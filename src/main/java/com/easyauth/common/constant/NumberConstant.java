@@ -6,6 +6,8 @@ package com.easyauth.common.constant;
 public class NumberConstant {
     public static final long Day_Seconds = 86400;
     public static final long Week_Seconds = 604800;
+    public static final long Ten_Minutes_Seconds = 600;
+
     /**
      * <p>redis 与 当前服务器的通信延迟容错时间</p>
      * <p>token刷新过期机制是：

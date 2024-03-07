@@ -13,6 +13,7 @@ import com.easyauth.security.JwtAuthenticationToken;
 import com.easyauth.service.RedisService;
 import com.easyauth.service.ResourceService;
 import io.jsonwebtoken.Claims;
+import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,12 +27,10 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.AntPathMatcher;
-
-import javax.management.relation.RoleList;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+
 
 @SpringBootTest
 class EasyauthApplicationTests {
@@ -56,10 +55,12 @@ class EasyauthApplicationTests {
 
     @Autowired
     private JavaMailSender mailSender;
+    @Autowired
+    private TemplateEngine templateEngine;
 
     @Test
     @Async
-    void contextLoads() {
+    void contextLoads() throws MessagingException {
         // 解决本地DNS未配置 ip->域名场景下，邮件发送太慢的问题
         System.getProperties().setProperty("mail.mime.address.usecanonicalhostname", "false");
         // 获取 MimeMessage
@@ -69,12 +70,17 @@ class EasyauthApplicationTests {
         session.setDebug(true);
         //  解决本地DNS未配置 ip->域名场景下，邮件发送太慢的问题
         session.getProperties().setProperty("mail.smtp.localhost", "myComputer");
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("2507544221@qq.com");
-        message.setTo("2507544221@qq.com");
-        message.setText("test");
-        message.setSubject("测试邮件");
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        helper.setTo("2507544221@qq.com");
+        helper.setFrom("freecho@qq.com");
+        helper.setSubject("主题：HTML邮件");
+        helper.setText("<html><body><h1>Hello World!</h1></body></html>", true);
         mailSender.send(message);
+
+
     }
 
     @Test
@@ -91,47 +97,5 @@ class EasyauthApplicationTests {
 
     }
 
-    // 添加 角色id:资源id 数据到redis
-    @Test
-    void myTest() {
-        Result<Page<Resource>> list = resourceController.getList(1, 100);
-        List<Resource> records = list.getData().getRecords();
-        List<Integer> resourceList = records.stream().map(Resource::getId).collect(Collectors.toList());
 
-        Result<Page<Role>> rolePage = roleController.getList(1, 100);
-        List<Integer> roleList = rolePage.getData().getRecords().stream().map(Role::getId).collect(Collectors.toList());
-
-
-        List<RolePermission> permsList = rolePermissionController.getList(1, 100).getData().getRecords();
-
-
-        for (Integer resourceId : resourceList) {
-            for (Integer roleId : roleList) {
-                boolean flag = false;
-                for (RolePermission rolePermission : permsList) {
-                    if (rolePermission.getRoleId().equals(roleId) && rolePermission.getResourceId().equals(resourceId)) {
-                        flag = true;
-                        break;
-
-                    }
-                }
-                redisService.set(roleId + ":" + resourceId, flag);
-            }
-        }
-
-    }
-
-    // 添加资源数据到redis
-    @Test
-    void myTest0() {
-        Result<Page<Resource>> list = resourceController.getList(1, 100);
-        List<Resource> records = list.getData().getRecords();
-        List<Integer> resourceList = records.stream().map(Resource::getId).collect(Collectors.toList());
-
-        records.forEach(
-                resource -> {
-                    redisService.set(resource.getHttpMethod() + ":" + resource.getPath(), resource.getId());
-                }
-        );
-    }
 }

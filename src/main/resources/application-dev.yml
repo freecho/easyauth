@@ -16,7 +16,7 @@ spring:
   mail:
     debug: true
     host: smtp.qq.com
-    username: 2507544221@qq.com
+    username: freecho@qq.com
     password: yhesdttpinblebje
     port: 465
     properties:

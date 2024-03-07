@@ -2,6 +2,23 @@ spring:
   profiles:
     active: dev
 
+config:
+  sitename: EasyAuth
+
+secure:
+  ignored:
+    urls: #安全路径白名单
+      - /user/auth/**
+      - /admin/auth/**
+      - /**/*.html
+      - /**/*.js
+      - /**/*.css
+      - /**/*.png
+      - /favicon.ico
+      - /webjars/**
+      - /v3/api-docs/**
+      - /error/**
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -24,17 +41,3 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
   mapper-locations: classpath:/mapper/**/*.xml
-
-secure:
-  ignored:
-    urls: #安全路径白名单
-      - /user/auth/**
-      - /admin/auth/**
-      - /**/*.html
-      - /**/*.js
-      - /**/*.css
-      - /**/*.png
-      - /favicon.ico
-      - /webjars/**
-      - /v3/api-docs/**
-      - /error/**
