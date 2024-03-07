@@ -10,8 +10,6 @@ import lombok.Data;
 public class EmployeeRole {
     @TableId(value = "id",type = IdType.AUTO)
     private Integer id;
-
     private Integer employeeId;
-
     private Integer roleId;
 }

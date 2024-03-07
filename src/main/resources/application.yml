@@ -29,7 +29,7 @@ springdoc:
   group-configs:
     - group: 'default'
       paths-to-match: '/**'
-#      packages-to-scan: com.easyauth
+      packages-to-scan: com.easyauth
 
 knife4j:
   enable: true

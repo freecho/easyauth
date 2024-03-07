@@ -1,8 +1,4 @@
 spring:
-  security:
-    user:
-      password: "123456"
-      name: "admin"
   datasource:
     url: jdbc:mysql://localhost:3306/easy_auth?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
@@ -46,6 +42,3 @@ jwt:
   ttlMillis: "604800000" #token过期时间：7天
   tokenHeader: Authorization #JWT存储的请求头
 
-springdoc:
-  group-configs:
-    packages-to-scan: com.easyauth

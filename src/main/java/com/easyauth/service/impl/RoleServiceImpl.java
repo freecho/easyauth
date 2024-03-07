@@ -12,6 +12,7 @@ import com.easyauth.service.RoleService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     private ResourceService resourceService;
 
     @Override
+    @Transactional
     public void add(RoleDTO dto) {
         Role role = new Role();
         BeanUtils.copyProperties(dto, role);
@@ -47,6 +49,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     }
 
     @Override
+    @Transactional
     public void update(RoleDTO dto) {
         Role role = new Role();
         BeanUtils.copyProperties(dto, role);

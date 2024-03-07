@@ -41,7 +41,7 @@ public class EmailServiceImpl implements EmailService {
         Context context = new Context();
         context.setVariable("code", code);
         context.setVariable("siteName", siteName);
-        String emailContent = templateEngine.process("registerVerifyEmail", context);
+        String emailContent = templateEngine.process("VerifyEmail", context);
         // 发送邮件
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");

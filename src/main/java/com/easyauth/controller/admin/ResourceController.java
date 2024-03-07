@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/resource")
 @Tag(name = "资源管理")
 public class ResourceController {
-
     @Autowired
     private ResourceService resourceService;
     @Autowired
@@ -26,7 +25,7 @@ public class ResourceController {
     @PostMapping
     public Result<String> add(@RequestBody Resource resource) {
         resourceService.save(resource);
-        redisService.set(resource.getHttpMethod()+":"+resource.getPath(),resource.getId());
+        redisService.set(resource.getHttpMethod() + ":" + resource.getPath(), resource.getId());
         return Result.success();
     }
 
@@ -34,9 +33,9 @@ public class ResourceController {
     @PutMapping
     public Result<String> update(@RequestBody Resource resource) {
         Resource oldResource = resourceService.getById(resource.getId());
-        redisService.del(oldResource.getHttpMethod()+":"+oldResource.getPath());
+        redisService.del(oldResource.getHttpMethod() + ":" + oldResource.getPath());
         resourceService.updateById(resource);
-        redisService.set(resource.getHttpMethod()+":"+resource.getPath(),resource.getId());
+        redisService.set(resource.getHttpMethod() + ":" + resource.getPath(), resource.getId());
         return Result.success();
     }
 
@@ -44,12 +43,12 @@ public class ResourceController {
     @DeleteMapping
     public Result<String> deleteById(Integer id) {
         Resource resource = resourceService.getById(id);
-        redisService.del(resource.getHttpMethod()+":"+resource.getPath());
+        redisService.del(resource.getHttpMethod() + ":" + resource.getPath());
         resourceService.removeById(id);
         return Result.success();
     }
 
-    @Operation(summary = "分页条件查询",description = "current必须提供，size默认为10")
+    @Operation(summary = "分页条件查询", description = "current必须提供，size默认为10")
     @GetMapping("/conditionSearch")
     public Result<Page<Resource>> conditionSearch(ResourcePageQueryDTO dto) {
         return Result.success(resourceService.conditionSearch(dto));
@@ -57,7 +56,7 @@ public class ResourceController {
 
     @Operation(summary = "资源列表")
     @GetMapping("/list")
-    public Result<Page<Resource>> getList(Integer current,@RequestParam(required = false,defaultValue = "10") Integer size) {
+    public Result<Page<Resource>> getList(Integer current, @RequestParam(required = false, defaultValue = "10") Integer size) {
         Page<Resource> page = new Page<>(current, size);
         Page<Resource> pageResult = resourceService.page(page);
         return Result.success(pageResult);

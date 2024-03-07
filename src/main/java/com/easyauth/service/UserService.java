@@ -3,10 +3,7 @@ package com.easyauth.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.easyauth.common.result.Result;
-import com.easyauth.domain.DTO.UserDTO;
-import com.easyauth.domain.DTO.UserFormLoginDTO;
-import com.easyauth.domain.DTO.UserPageQueryDTO;
-import com.easyauth.domain.DTO.UserRegisterDTO;
+import com.easyauth.domain.DTO.*;
 import com.easyauth.domain.VO.UserVO;
 import com.easyauth.domain.entity.User;
 
@@ -29,4 +26,8 @@ public interface UserService extends IService<User> {
     Result<String> register(UserRegisterDTO dto);
 
     boolean isExist(String username, String email);
+
+    Result<String> forgetPassword(ForgetPasswordDTO dto);
+
+    Result<String> changePassword(ChangePasswordDTO dto);
 }

@@ -3,7 +3,7 @@ package com.easyauth.domain.DTO;
 import lombok.Data;
 
 @Data
-public class UserFormLoginDTO {
+public class ForgetPasswordVerifyDTO {
     private String username;
-    private String password;
+    private String email;
 }

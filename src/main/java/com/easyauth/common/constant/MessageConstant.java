@@ -22,6 +22,9 @@ public class MessageConstant {
     public static final String Username_Or_Email_Exist = "用户名或邮箱已存在";
 
     public static final String Code_Error = "验证码错误";
+    public static final String Old_Password_Error = "旧密码错误";
+
+    public static final String Username_Or_Email_Not_Match = "用户名或邮箱不匹配";
 
 
 }

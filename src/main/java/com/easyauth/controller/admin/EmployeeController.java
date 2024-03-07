@@ -15,10 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin/employee")
-@Tag(name = "员工表")
+@Tag(name = "员工管理")
 @Slf4j
 public class EmployeeController {
-
     @Autowired
     private EmployeeService employeeService;
     @Autowired
@@ -54,6 +53,5 @@ public class EmployeeController {
         //  如果有角色id，使用连表查询
         return Result.success(employeeService.conditionSearchWithRoleId(dto));
     }
-
 
 }

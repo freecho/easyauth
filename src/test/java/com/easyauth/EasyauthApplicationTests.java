@@ -1,5 +1,11 @@
 package com.easyauth;
 
+import cloud.tianai.captcha.common.constant.CaptchaTypeConstant;
+import cloud.tianai.captcha.common.response.ApiResponse;
+import cloud.tianai.captcha.spring.application.ImageCaptchaApplication;
+import cloud.tianai.captcha.spring.vo.CaptchaResponse;
+import cloud.tianai.captcha.spring.vo.ImageCaptchaVO;
+import cloud.tianai.captcha.validator.common.model.dto.ImageCaptchaTrack;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.easyauth.common.result.Result;
 import com.easyauth.common.utils.JwtUtil;
@@ -29,6 +35,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+
 import java.util.*;
 
 
@@ -58,6 +65,10 @@ class EasyauthApplicationTests {
     @Autowired
     private TemplateEngine templateEngine;
 
+    @Autowired
+    private ImageCaptchaApplication application;
+
+
     @Test
     @Async
     void contextLoads() throws MessagingException {
@@ -80,20 +91,6 @@ class EasyauthApplicationTests {
         helper.setText("<html><body><h1>Hello World!</h1></body></html>", true);
         mailSender.send(message);
 
-
-    }
-
-    @Test
-    void mytest2() {
-        UserDetail userDetail = new UserDetail();
-        userDetail.setUsername("admin123");
-        userDetail.setId(88);
-        userDetail.setEmail("123@qq.com");
-        ArrayList<Integer> list = new ArrayList<>();
-        list.add(2);
-        userDetail.setRolesId(list);
-
-        redisService.set("admin" + ":" + userDetail.getId(), userDetail);
 
     }
 

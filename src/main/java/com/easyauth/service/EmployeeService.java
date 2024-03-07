@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.easyauth.domain.DTO.EmployeeDTO;
 import com.easyauth.domain.DTO.EmployeePageQueryDTO;
+import com.easyauth.domain.DTO.UserFormLoginDTO;
 import com.easyauth.domain.VO.EmployeeVO;
 import com.easyauth.domain.entity.Employee;
 
@@ -17,4 +18,6 @@ public interface EmployeeService extends IService<Employee> {
     Page<EmployeeVO> conditionSearchWithOutRoleId(EmployeePageQueryDTO dto);
 
     Page<EmployeeVO> conditionSearchWithRoleId(EmployeePageQueryDTO dto);
+
+    String formLogin(UserFormLoginDTO dto);
 }

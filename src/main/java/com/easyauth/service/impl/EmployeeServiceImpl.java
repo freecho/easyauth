@@ -4,26 +4,31 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.easyauth.common.constant.MessageConstant;
+import com.easyauth.common.constant.NumberConstant;
 import com.easyauth.common.exception.InvalidDataException;
+import com.easyauth.common.utils.JwtUtil;
 import com.easyauth.common.utils.PageUtil;
 import com.easyauth.domain.DTO.EmployeeDTO;
 import com.easyauth.domain.DTO.EmployeePageQueryDTO;
+import com.easyauth.domain.DTO.UserFormLoginDTO;
 import com.easyauth.domain.VO.EmployeeVO;
-import com.easyauth.domain.entity.Employee;
-import com.easyauth.domain.entity.EmployeeRole;
-import com.easyauth.domain.entity.Role;
+import com.easyauth.domain.entity.*;
 import com.easyauth.mapper.EmployeeMapper;
 import com.easyauth.service.EmployeeRoleService;
 import com.easyauth.service.EmployeeService;
+import com.easyauth.service.RedisService;
 import com.easyauth.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -31,15 +36,16 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
 
     @Autowired
     private EmployeeMapper employeeMapper;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
-
     @Autowired
     private EmployeeRoleService employeeRoleService;
-
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private RedisService redisService;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Override
     @Transactional
@@ -157,6 +163,32 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee> i
         page.setTotal(employeeList.size());
 
         return PageUtil.convert(page, EmployeeVO.class);
+    }
+
+    @Override
+    public String formLogin(UserFormLoginDTO dto) {
+        // 验证数据
+        if (dto == null || dto.getUsername() == null || dto.getPassword() == null) {
+            throw new InvalidDataException(MessageConstant.VALIDATE_FAILED);
+        }
+
+        Employee employee = this.getOne(new LambdaQueryWrapper<Employee>().eq(Employee::getUsername, dto.getUsername()));
+        if (employee == null || !passwordEncoder.matches(dto.getPassword(), employee.getPassword()) || employee.getStatus() != 1) {
+            throw new InvalidDataException(MessageConstant.Login_Error);
+        }
+        // redis中存储用户信息
+        UserDetail userDetail = new UserDetail();
+        BeanUtils.copyProperties(employee, userDetail);
+        List<Integer> rolesId = employeeRoleService.list(new LambdaQueryWrapper<EmployeeRole>().eq(EmployeeRole::getEmployeeId,
+                employee.getId())).stream().map(EmployeeRole::getRoleId).toList();
+        userDetail.setRolesId(rolesId);
+        redisService.set("admin:" + employee.getId(), userDetail, NumberConstant.Week_Seconds);
+
+        // 生成token
+        Map<String, Object> map = new HashMap<>();
+        map.put("identity", "admin");
+        map.put("id", employee.getId());
+        return jwtUtil.createJWT(map);
     }
 
     @Override

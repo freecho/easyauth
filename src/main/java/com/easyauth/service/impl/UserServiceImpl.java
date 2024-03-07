@@ -9,10 +9,7 @@ import com.easyauth.common.exception.InvalidDataException;
 import com.easyauth.common.result.Result;
 import com.easyauth.common.utils.JwtUtil;
 import com.easyauth.common.utils.PageUtil;
-import com.easyauth.domain.DTO.UserDTO;
-import com.easyauth.domain.DTO.UserFormLoginDTO;
-import com.easyauth.domain.DTO.UserPageQueryDTO;
-import com.easyauth.domain.DTO.UserRegisterDTO;
+import com.easyauth.domain.DTO.*;
 import com.easyauth.domain.VO.UserVO;
 import com.easyauth.domain.entity.*;
 import com.easyauth.mapper.UserMapper;
@@ -20,6 +17,7 @@ import com.easyauth.service.RedisService;
 import com.easyauth.service.RoleService;
 import com.easyauth.service.UserRoleService;
 import com.easyauth.service.UserService;
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -233,6 +231,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = new User();
         BeanUtils.copyProperties(dto, user);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // 删除缓存
+        redisService.del("email:" + dto.getEmail());
         // 保存数据
         this.save(user);
         UserRole userRole = new UserRole();
@@ -250,5 +250,33 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean isExist(String username, String email) {
         return this.getOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username)) != null
                 || this.getOne(new LambdaQueryWrapper<User>().eq(User::getEmail, email)) != null;
+    }
+
+    @Override
+    public Result<String> forgetPassword(ForgetPasswordDTO dto) {
+        // 验证验证码
+        String code = dto.getCode();
+        if (code == null || !code.equals(redisService.get("email:" + dto.getEmail()))) {
+            return Result.failed(MessageConstant.Code_Error);
+        }
+        // 修改密码
+        User user = this.getOne(new LambdaQueryWrapper<User>().eq(User::getUsername, dto.getUsername()));
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        this.updateById(user);
+        // 删除缓存
+        redisService.del("email:" + dto.getEmail());
+        return Result.success();
+    }
+
+    @Override
+    public Result<String> changePassword(ChangePasswordDTO dto) {
+        Claims claims = jwtUtil.parseJWT(dto.getToken());
+        User user = this.getById(claims.get("id", Integer.class));
+        if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
+            return Result.failed(MessageConstant.Old_Password_Error);
+        }
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        this.updateById(user);
+        return Result.success();
     }
 }

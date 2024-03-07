@@ -7,5 +7,4 @@ import com.easyauth.domain.entity.EmployeeRole;
 import java.util.List;
 
 public interface EmployeeRoleService extends IService<EmployeeRole> {
-    List<EmployeeRole> list(Long id);
 }
